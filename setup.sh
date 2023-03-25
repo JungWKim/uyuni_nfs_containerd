@@ -1,0 +1,183 @@
+#---------------
+#
+# run without sudo
+#
+#---------------
+
+#!/bin/bash
+
+LOCAL_FILE_COPY=no
+IP=
+LB_IP_POOL=
+PV_SIZE=
+
+cd ~
+
+# prevent auto upgrade
+sudo sed -i 's/1/0/g' /etc/apt/apt.conf.d/20auto-upgrades
+
+# install nvidia driver
+sudo apt update
+sudo apt install -y build-essential
+sudo apt install -y linux-headers-generic
+sudo apt install -y dkms
+
+cat << EOF | sudo tee -a /etc/modprobe.d/blacklist.conf 
+blacklist nouveau
+blacklist lbm-nouveau
+options nouveau modeset=0
+alias nouveau off
+alias lbm-nouveau off
+EOF
+
+echo options nouveau modeset=0 | sudo tee -a /etc/modprobe.d/nouveau-kms.conf
+sudo update-initramfs -u
+
+sudo rmmod nouveau
+
+if [ ${LOCAL_FILE_COPY} == "yes" ] ; then
+	scp root@192.168.1.59:/root/files/NVIDIA-Linux-x86_64-515.57.run .
+else
+        wget https://kr.download.nvidia.com/XFree86/Linux-x86_64/515.57/NVIDIA-Linux-x86_64-515.57.run
+fi
+
+sudo sh ~/NVIDIA-Linux-x86_64-515.57.run
+
+nvidia-smi
+nvidia-smi -L
+
+# disable firewall
+sudo systemctl stop ufw
+sudo systemctl disable ufw
+
+# install basic packages
+sudo apt install -y net-tools nfs-common whois
+
+# network configuration
+sudo modprobe overlay \
+    && sudo modprobe br_netfilter
+
+cat <<EOF | sudo tee -a /etc/modules-load.d/containerd.conf
+overlay
+br_netfilter
+EOF
+
+cat <<EOF | sudo tee -a /etc/sysctl.d/99-kubernetes-cri.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.ipv4.ip_forward                 = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+EOF
+
+sudo sysctl --system
+
+# install containerd
+sudo apt-get update
+
+sudo apt-get install \
+    ca-certificates \
+    curl \
+    gnupg \
+    lsb-release
+
+sudo mkdir -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo apt-get update \
+    && sudo apt-get install -y containerd.io
+
+sudo mkdir -p /etc/containerd \
+    && sudo containerd config default | sudo tee /etc/containerd/config.toml
+
+# ssh configuration
+ssh-keygen -t rsa
+
+ssh-copy-id -i ~/.ssh/id_rsa ${USER}@${IP}
+
+# k8s installation via kubespray
+sudo apt install -y python3-pip
+git clone -b release-2.19 https://github.com/kubernetes-sigs/kubespray.git
+cd kubespray
+pip install -r requirements.txt
+
+echo "export PATH=${HOME}/.local/bin:${PATH}" | sudo tee ${HOME}/.bashrc > /dev/null
+source ${HOME}/.bashrc
+
+cp -rfp inventory/sample inventory/mycluster
+declare -a IPS=(${IP})
+CONFIG_FILE=inventory/mycluster/hosts.yaml python3 contrib/inventory_builder/inventory.py ${IPS[@]}
+
+# automatically disable swap partition
+ansible-playbook -i inventory/mycluster/hosts.yaml  --become --become-user=root cluster.yml -K
+cd ~
+
+# enable kubectl in admin account and root
+mkdir -p ${HOME}/.kube
+sudo cp -i /etc/kubernetes/admin.conf ${HOME}/.kube/config
+sudo chown ${USER}:${USER} ${HOME}/.kube/config
+
+# enable kubectl & kubeadm auto-completion
+echo "source <(kubectl completion bash)" >> ${HOME}/.bashrc
+echo "source <(kubeadm completion bash)" >> ${HOME}/.bashrc
+
+echo "source <(kubectl completion bash)" | sudo tee -a /root/.bashrc
+echo "source <(kubeadm completion bash)" | sudo tee -a /root/.bashrc
+
+# install nvidia-container-toolkit
+distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
+    && curl -s -L https://nvidia.github.io/libnvidia-container/gpgkey | sudo apt-key add - \
+    && curl -s -L https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list | sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
+
+sudo apt-get update \
+    && sudo apt-get install -y nvidia-container-toolkit
+
+sudo mv ~/xiilab/config.toml /etc/containerd/
+sudo systemctl restart containerd
+
+# install helmfile
+wget https://github.com/helmfile/helmfile/releases/download/v0.150.0/helmfile_0.150.0_linux_amd64.tar.gz
+tar -zxvf helmfile_0.150.0_linux_amd64.tar.gz
+sudo mv helmfile /usr/bin/
+rm LICENSE && rm README.md && rm helmfile_0.150.0_linux_amd64.tar.gz
+
+# deploy uyuni infra
+git clone https://github.com/xiilab/Uyuni_Deploy.git
+cd ~/Uyuni_Deploy/environments
+rm -rf test
+cp -r default test
+sed -i "s/default.com/${IP}/g" test/values.yaml
+sed -i "s/192.168.1.210/${IP}/g" test/values.yaml
+sed -i "s/192.168.56.20-192.168.56.50/${LB_IP_POOL}/g" test/values.yaml
+sed -i "s/192.168.2.27/${IP}/g" test/values.yaml
+cd ~/Uyuni_Deploy
+sed -i "16,18d" helmfile.yaml
+sed -i "2,12d" helmfile.yaml
+helmfile --environment test -l type=base sync
+cd ~
+
+# install kustomize
+sudo snap install kustomize
+
+# download uyuni-kustomize repository and configure it
+git clone https://github.com/xiilab/Uyuni_Kustomize.git
+cd ~/Uyuni_Kustomize/overlays
+cp -r stage test
+cp ~/.kube/config test/config
+sed -i "s/127.0.0.1/${IP}/g" test/config
+
+sed -i "s/uyuni-suite.xiilab.com/${IP}/g" test/ingress-patch.yaml
+sed -i "s/192.168.1.235/${IP}/g" test/core-deployment-env.yaml
+sed -i "s/uyuni-suite.xiilab.com/${IP}/g" test/core-deployment-env.yaml
+sed -i "s/uyuni-suite.xiilab.com/${IP}/g" test/frontend-deployment-env.yaml
+sed -i "s/newName: harbor.xiilab.com\/uyuni-suite\/uyuni-suite-frontend/newName: xiilab\/uyuni-suite-frontend/g" test/kustomization.yaml
+sed -i "s/uyuni-suite.xiilab.com//g" ~/Uyuni_Kustomize/base/services/ingress.yaml
+sed -i "s/100/${PV_SIZE}/g" test/volumes/uyuni-suite-pvc.yaml
+sed -i "s/192.168.2.27/${IP}/g" test/volumes/uyuni-suite-pv.yaml
+
+# deploy uyuni suite
+cd ..
+kubectl create ns uyuni-suite
+kustomize build overlays/test | kubectl apply -f -
