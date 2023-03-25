@@ -134,7 +134,7 @@ distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
 sudo apt-get update \
     && sudo apt-get install -y nvidia-container-toolkit
 
-sudo mv ~/xiilab/config.toml /etc/containerd/
+sudo mv ~/xiilab_nfs/config.toml /etc/containerd/
 sudo systemctl restart containerd
 
 # install helm
