@@ -53,6 +53,17 @@ sudo systemctl disable ufw
 # install basic packages
 sudo apt install -y net-tools nfs-common whois
 
+# install nvidia-container-toolkit
+distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
+    && curl -s -L https://nvidia.github.io/libnvidia-container/gpgkey | sudo apt-key add - \
+    && curl -s -L https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list | sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
+
+sudo apt-get update \
+    && sudo apt-get install -y nvidia-container-toolkit
+    
+# only up to this line for additional worker nodes
+#----------------------------------------------------------------
+
 # network configuration
 sudo modprobe overlay \
     && sudo modprobe br_netfilter
@@ -125,14 +136,6 @@ echo "source <(kubeadm completion bash)" >> ${HOME}/.bashrc
 
 echo "source <(kubectl completion bash)" | sudo tee -a /root/.bashrc
 echo "source <(kubeadm completion bash)" | sudo tee -a /root/.bashrc
-
-# install nvidia-container-toolkit
-distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
-    && curl -s -L https://nvidia.github.io/libnvidia-container/gpgkey | sudo apt-key add - \
-    && curl -s -L https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list | sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
-
-sudo apt-get update \
-    && sudo apt-get install -y nvidia-container-toolkit
 
 sudo mv ~/xiilab_nfs/config.toml /etc/containerd/
 sudo systemctl restart containerd
