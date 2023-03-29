@@ -170,7 +170,7 @@ sed -i "s/default.com/${IP}/g" test/values.yaml
 sed -i "s/192.168.1.210/${IP}/g" test/values.yaml
 sed -i "s/192.168.56.20-192.168.56.50/${LB_IP_POOL}/g" test/values.yaml
 sed -i "s/192.168.2.27/${NFS_IP}/g" test/values.yaml
-sed -i "s/\/kube_storage/${NFS_PATH}/g" test/values.yaml
+sed -i "s/\/kube_storage/\${NFS_PATH}/g" test/values.yaml
 cd ~/Uyuni_Deploy
 sed -i "16,18d" helmfile.yaml
 sed -i "2,12d" helmfile.yaml
