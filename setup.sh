@@ -9,6 +9,7 @@
 LOCAL_FILE_COPY=no
 IP=
 NFS_IP=
+# if asustor is nfs server, nfs_path will be like, "/volume1/****"
 NFS_PATH=/kube_storage
 LB_IP_POOL=
 PV_SIZE=
