@@ -18,6 +18,13 @@ cd ~
 # prevent auto upgrade
 sudo sed -i 's/1/0/g' /etc/apt/apt.conf.d/20auto-upgrades
 
+if [ -e /etc/needrestart/needrestart.conf ] ; then
+	# disable outdated librareis pop up
+	sed -i "s/\#\$nrconf{restart} = 'i'/\$nrconf{restart} = 'a'/g" /etc/needrestart/needrestart.conf
+	# disable kernel upgrade hint pop up
+	sed -i "s/\#\$nrconf{kernelhints} = -1/\$nrconf{kernelhints} = 0/g" /etc/needrestart/needrestart.conf 
+fi
+
 # install nvidia driver
 sudo apt update
 sudo apt install -y build-essential
