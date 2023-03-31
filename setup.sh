@@ -173,6 +173,7 @@ sed -i "s/192.168.1.210/${IP}/g" test/values.yaml
 sed -i "s/192.168.56.13/${NFS_IP}/g" test/values.yaml
 sed -i "s/\/kube_storage/\${NFS_PATH}/g" test/values.yaml
 sed -i "s/192.168.56.11/${IP}/g" test/values.yaml
+sed -i "s/keycloak12345/xiilabPassword3#/g" test/values.yaml
 
 cd ~/Uyuni_Deploy
 sed -i "s/default/test/g" helmfile.yaml
@@ -190,11 +191,11 @@ sed -i "s/uyuni-suite.xiilab.com/${IP}/g" test/ingress-patch.yaml
 sed -i "s/192.168.1.235/${IP}/g" test/core-deployment-env.yaml
 sed -i "s/uyuni-suite.xiilab.com/${IP}/g" test/core-deployment-env.yaml
 sed -i "s/uyuni-suite.xiilab.com/${IP}/g" test/frontend-deployment-env.yaml
-sed -i "s/newName: harbor.xiilab.com\/uyuni-suite\/uyuni-suite-frontend/newName: xiilab\/uyuni-suite-frontend/g" test/kustomization.yaml
+sed -i "s/newName: harbor.xiilab.com\/uyuni-suite/newName: xiilab/g" test/kustomization.yaml
 sed -i "s/- uyuni-suite-pv.yaml/#- uyuni-suite-pv.yaml/g" test/volumes/kustomization.yaml
-sed -i "s/uyuni-suite.xiilab.com//g" ~/Uyuni_Kustomize/base/services/ingress.yaml
 sed -i "s/100/${PV_SIZE}/g" test/volumes/uyuni-suite-pvc.yaml
 sed -i "s/uyuni-suite/nfs-client/g" test/volumes/uyuni-suite-pvc.yaml
+sed -i "s/uyuni-suite.xiilab.com//g" ~/Uyuni_Kustomize/base/services/ingress.yaml
 
 # deploy uyuni suite
 cd ..
