@@ -161,6 +161,9 @@ tar -zxvf helmfile_0.150.0_linux_amd64.tar.gz
 sudo mv helmfile /usr/bin/
 rm LICENSE && rm README.md && rm helmfile_0.150.0_linux_amd64.tar.gz
 
+# install kustomize
+sudo snap install kustomize
+
 # deploy uyuni infra - this process consumes 33G.
 git clone https://github.com/xiilab/Uyuni_Deploy.git
 cd ~/Uyuni_Deploy/environments
@@ -176,9 +179,6 @@ sed -i "16,18d" helmfile.yaml
 sed -i "2,12d" helmfile.yaml
 helmfile --environment test -l type=base sync
 cd ~
-
-# install kustomize
-sudo snap install kustomize
 
 # download uyuni-kustomize repository and configure it
 git clone https://github.com/xiilab/Uyuni_Kustomize.git
