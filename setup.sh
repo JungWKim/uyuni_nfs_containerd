@@ -145,7 +145,7 @@ echo "source <(kubeadm completion bash)" >> ${HOME}/.bashrc
 echo "source <(kubectl completion bash)" | sudo tee -a /root/.bashrc
 echo "source <(kubeadm completion bash)" | sudo tee -a /root/.bashrc
 
-sudo mv ~/xiilab_nfs/config.toml /etc/containerd/
+sudo cp ~/xiilab_nfs/config.toml /etc/containerd/
 sudo systemctl restart containerd
 
 # install helm
