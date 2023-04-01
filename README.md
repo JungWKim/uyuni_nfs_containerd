@@ -1,4 +1,7 @@
 ## This repository do below things
+### * before you run this script,
+### - prepare nfs server which provides /data directory
+### - do not run this script as root or sudo
 ### 1. install nvidia driver
 ### 2. install nvidia-container-toolkit
 ### 3. install containerd
