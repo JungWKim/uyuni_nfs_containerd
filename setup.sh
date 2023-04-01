@@ -171,8 +171,8 @@ sed -i "s/default.com/${IP}/g" test/values.yaml
 sed -i "s/192.168.1.210/${IP}/g" test/values.yaml
 sed -i "s/192.168.56.13/${NFS_IP}/g" test/values.yaml
 sed -i "s:/kube_storage:${NFS_PATH}:g" test/values.yaml
-sed -i "s/192.168.56.11/${IP}/g" test/values.yaml
 sed -i "s/keycloak12345/xiilabPassword3#/g" test/values.yaml
+sed -i "s/192.168.56.11/${IP}/g" test/values.yaml
 
 cd ~/Uyuni_Deploy
 sed -i "s/default/test/g" helmfile.yaml
