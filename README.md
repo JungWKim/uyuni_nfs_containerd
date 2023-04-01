@@ -1,5 +1,5 @@
 # xiilab_nfs
-#---------------
+---------------
 ## how to add worker nodes
 ### 1. run setup.sh up to specific lines
 ### 2. In master node, edit $HOME/kubespray/inventory/host.yaml.
