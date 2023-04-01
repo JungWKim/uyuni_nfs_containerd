@@ -69,9 +69,6 @@ distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
 
 sudo apt-get update \
     && sudo apt-get install -y nvidia-container-toolkit
-    
-# only up to this line for additional worker nodes
-#----------------------------------------------------------------
 
 # network configuration
 sudo modprobe overlay \
@@ -89,6 +86,9 @@ net.bridge.bridge-nf-call-ip6tables = 1
 EOF
 
 sudo sysctl --system
+
+# only up to this line for additional worker nodes
+#----------------------------------------------------------------
 
 # install containerd
 sudo apt-get update
