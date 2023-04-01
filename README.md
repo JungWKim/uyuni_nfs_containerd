@@ -17,7 +17,7 @@
 ### 2. In master node, edit $HOME/kubespray/inventory/mycluster/host.yaml.
 ### 3. copy master's administrator's public key to worker node
 ### 4. add worker node into k8s using ansible command
-### 5. In worker node, copy config.toml to /etc/containerd/config
+### 5. In every node, copy config.toml to /etc/containerd/config
 ### 6. In uyuni dashboard, add worker node.
 -----------------------
 ## how to remove uyuni-infra and uyuni-suite completely
