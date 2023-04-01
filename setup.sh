@@ -45,12 +45,12 @@ sudo update-initramfs -u
 sudo rmmod nouveau
 
 if [ ${LOCAL_FILE_COPY} == "yes" ] ; then
-	scp root@192.168.1.59:/root/files/NVIDIA-Linux-x86_64-515.57.run .
+	scp root@192.168.1.59:/root/files/NVIDIA-Linux-x86_64-525.89.02.run .
 else
-        wget https://kr.download.nvidia.com/XFree86/Linux-x86_64/515.57/NVIDIA-Linux-x86_64-515.57.run
+        wget https://kr.download.nvidia.com/XFree86/Linux-x86_64/525.89.02/NVIDIA-Linux-x86_64-525.89.02.run
 fi
 
-sudo sh ~/NVIDIA-Linux-x86_64-515.57.run
+sudo sh ~/NVIDIA-Linux-x86_64-525.89.02.run
 
 nvidia-smi
 nvidia-smi -L
