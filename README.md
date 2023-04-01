@@ -1,3 +1,14 @@
+## This repository do below things
+### 1. install nvidia driver
+### 2. install nvidia-container-toolkit
+### 3. install containerd
+### 4. set up k8s control plane
+### 5. install helm
+### 6. install helmfile
+### 7. install kustomize
+### 8. install uyuni infra
+### 9. install uyuni suite
+-----------------------
 ## how to add worker nodes
 ### 1. run setup.sh up to specific lines
 ### 2. In master node, edit $HOME/kubespray/inventory/host.yaml.
