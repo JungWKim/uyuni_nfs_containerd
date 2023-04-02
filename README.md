@@ -25,3 +25,7 @@
 ### 2. helmfile --environment test -l type=base destroy
 ### 3. delete every pvcs, pvs and files in nfs server
 ### 4. delete every configmap, secrets.
+----------------------
+## keycloak domain : http://???.???.???.???:30090
+### default ID : Admin
+### default PW : xiilabPassword3#
