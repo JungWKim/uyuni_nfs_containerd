@@ -174,6 +174,6 @@ cp ~/.kube/config applications/uyuni-suite/uyuni-suite/config
 sed -i "s/127.0.0.1/${IP}/g" applications/uyuni-suite/uyuni-suite/config
 sed -i "s/5/${PV_SIZE}/g" applications/uyuni-suite/values.yaml.gotmpl
 helm repo add bitnami https://charts.bitnami.com/bitnami
-helmfile --environment test -l type=base sync
-helmfile --environment test -l type=app sync
+helmfile --environment default -l type=base sync
+helmfile --environment default -l type=app sync
 cd ~
