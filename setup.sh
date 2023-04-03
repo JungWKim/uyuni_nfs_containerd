@@ -163,8 +163,6 @@ rm LICENSE && rm README.md && rm helmfile_0.150.0_linux_amd64.tar.gz
 git clone -b develop https://github.com/xiilab/Uyuni_Deploy.git
 
 cd ~/Uyuni_Deploy
-sed -i "s/default.com/${IP}/g" environments/default/values.yaml
-sed -i "s/192.168.1.210/{}/g" environments/default/values.yaml
 sed -i "s/192.168.56.13/${NFS_IP}/g" environments/default/values.yaml
 sed -i "s:/kube_storage:${NFS_PATH}:g" environments/default/values.yaml
 sed -i "s/192.168.56.11/${IP}/g" environments/default/values.yaml
