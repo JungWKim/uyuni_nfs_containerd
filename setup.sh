@@ -176,27 +176,14 @@ sed -i "s/192.168.56.11/${IP}/g" test/values.yaml
 
 cd ~/Uyuni_Deploy
 sed -i "s/default/test/g" helmfile.yaml
+cp ~/.kube/config applications/uyuni-suite/uyuni-suite/config
+sed -i "s/127.0.0.1/${IP}/g" applications/uyuni-suite/uyuni-suite/config
+helm repo add bitnami https://charts.bitnami.com/bitnami
 helmfile --environment test -l type=base sync
+helmfile --environment test -l type=app sync
 cd ~
 
-# download uyuni-kustomize repository and configure it
-git clone https://github.com/xiilab/Uyuni_Kustomize.git
-cd ~/Uyuni_Kustomize/overlays
-cp -r stage test
-cp ~/.kube/config test/config
-sed -i "s/127.0.0.1/${IP}/g" test/config
-
-sed -i "s/uyuni-suite.xiilab.com/${IP}/g" test/ingress-patch.yaml
-sed -i "s/192.168.1.235/${IP}/g" test/core-deployment-env.yaml
-sed -i "s/uyuni-suite.xiilab.com/${IP}/g" test/core-deployment-env.yaml
-sed -i "s/uyuni-suite.xiilab.com/${IP}/g" test/frontend-deployment-env.yaml
-sed -i "s/newName: harbor.xiilab.com\/uyuni-suite/newName: xiilab/g" test/kustomization.yaml
 sed -i "s/- uyuni-suite-pv.yaml/#- uyuni-suite-pv.yaml/g" test/volumes/kustomization.yaml
 sed -i "s/100/${PV_SIZE}/g" test/volumes/uyuni-suite-pvc.yaml
 sed -i "s/uyuni-suite/nfs-client/g" test/volumes/uyuni-suite-pvc.yaml
 sed -i "s/uyuni-suite.xiilab.com//g" ~/Uyuni_Kustomize/base/services/ingress.yaml
-
-# deploy uyuni suite
-cd ..
-kubectl create ns uyuni-suite
-kustomize build overlays/test | kubectl apply -f -
