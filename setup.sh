@@ -167,7 +167,6 @@ sed -i "s/default.com/${IP}/g" environments/default/values.yaml
 sed -i "s/192.168.1.210/${IP}/g" environments/default/values.yaml
 sed -i "s/192.168.56.13/${NFS_IP}/g" environments/default/values.yaml
 sed -i "s:/kube_storage:${NFS_PATH}:g" environments/default/values.yaml
-sed -i "s/keycloak12345/xiilabPassword3#/g" environments/default/values.yaml
 sed -i "s/192.168.56.11/${IP}/g" environments/default/values.yaml
 
 cp ~/.kube/config applications/uyuni-suite/uyuni-suite/config
