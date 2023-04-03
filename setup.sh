@@ -179,8 +179,3 @@ helm repo add bitnami https://charts.bitnami.com/bitnami
 helmfile --environment test -l type=base sync
 helmfile --environment test -l type=app sync
 cd ~
-
-sed -i "s/- uyuni-suite-pv.yaml/#- uyuni-suite-pv.yaml/g" test/volumes/kustomization.yaml
-sed -i "s/100/${PV_SIZE}/g" test/volumes/uyuni-suite-pvc.yaml
-sed -i "s/uyuni-suite/nfs-client/g" test/volumes/uyuni-suite-pvc.yaml
-sed -i "s/uyuni-suite.xiilab.com//g" ~/Uyuni_Kustomize/base/services/ingress.yaml
