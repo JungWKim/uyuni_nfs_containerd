@@ -162,19 +162,19 @@ rm LICENSE && rm README.md && rm helmfile_0.150.0_linux_amd64.tar.gz
 # deploy uyuni infra - this process consumes 33G.
 git clone -b develop https://github.com/xiilab/Uyuni_Deploy.git
 
-cd ~/Uyuni_Deploy/environments
-cp -r default test
-sed -i "s/default.com/${IP}/g" test/values.yaml
-sed -i "s/192.168.1.210/${IP}/g" test/values.yaml
-sed -i "s/192.168.56.13/${NFS_IP}/g" test/values.yaml
-sed -i "s:/kube_storage:${NFS_PATH}:g" test/values.yaml
-sed -i "s/keycloak12345/xiilabPassword3#/g" test/values.yaml
-sed -i "s/192.168.56.11/${IP}/g" test/values.yaml
-
 cd ~/Uyuni_Deploy
+cp -r environments/default environments/test
+sed -i "s/default.com/${IP}/g" environments/test/values.yaml
+sed -i "s/192.168.1.210/${IP}/g" environments/test/values.yaml
+sed -i "s/192.168.56.13/${NFS_IP}/g" environments/test/values.yaml
+sed -i "s:/kube_storage:${NFS_PATH}:g" environments/test/values.yaml
+sed -i "s/keycloak12345/xiilabPassword3#/g" environments/test/values.yaml
+sed -i "s/192.168.56.11/${IP}/g" environments/test/values.yaml
+
 sed -i "s/default/test/g" helmfile.yaml
 cp ~/.kube/config applications/uyuni-suite/uyuni-suite/config
 sed -i "s/127.0.0.1/${IP}/g" applications/uyuni-suite/uyuni-suite/config
+sed -i "s/5/50/g" applications/uyuni-suite/values.yaml.gotmpl
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helmfile --environment test -l type=base sync
 helmfile --environment test -l type=app sync
