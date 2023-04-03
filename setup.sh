@@ -159,9 +159,6 @@ tar -zxvf helmfile_0.150.0_linux_amd64.tar.gz
 sudo mv helmfile /usr/bin/
 rm LICENSE && rm README.md && rm helmfile_0.150.0_linux_amd64.tar.gz
 
-# install kustomize
-sudo snap install kustomize
-
 # deploy uyuni infra - this process consumes 33G.
 git clone -b develop https://github.com/xiilab/Uyuni_Deploy.git
 
