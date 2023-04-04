@@ -1,7 +1,6 @@
 #---------------
-#
-# run without sudo
-#
+# 1. run without sudo
+# 2. you need nfs-server for uyuni-infra
 #---------------
 
 #!/bin/bash
@@ -161,12 +160,11 @@ rm LICENSE && rm README.md && rm helmfile_0.150.0_linux_amd64.tar.gz
 
 # deploy uyuni infra - this process consumes 33G.
 git clone -b develop https://github.com/xiilab/Uyuni_Deploy.git
-
 cd ~/Uyuni_Deploy
+
 sed -i "s/192.168.56.13/${NFS_IP}/g" environments/default/values.yaml
 sed -i "s:/kube_storage:${NFS_PATH}:g" environments/default/values.yaml
 sed -i "s/192.168.56.11/${IP}/g" environments/default/values.yaml
-
 cp ~/.kube/config applications/uyuni-suite/uyuni-suite/config
 sed -i "s/127.0.0.1/${IP}/g" applications/uyuni-suite/uyuni-suite/config
 sed -i "s/5/${PV_SIZE}/g" applications/uyuni-suite/values.yaml.gotmpl
