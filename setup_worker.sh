@@ -1,16 +1,10 @@
 #---------------
 # 1. run without sudo
-# 2. you need nfs-server for uyuni-infra
 #---------------
 
 #!/bin/bash
 
 LOCAL_FILE_COPY=no
-IP=
-NFS_IP=
-# if asustor is nfs server, nfs_path will be like, "/volume1/****"
-NFS_PATH=/kube_storage
-PV_SIZE=
 
 cd ~
 
