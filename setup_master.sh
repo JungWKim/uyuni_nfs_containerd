@@ -90,25 +90,25 @@ sudo sysctl --system
 #----------------------------------------------------------------
 
 # install containerd
-sudo apt-get update
+#sudo apt-get update
 
-sudo apt-get install \
-    ca-certificates \
-    curl \
-    gnupg \
-    lsb-release
+#sudo apt-get install \
+#    ca-certificates \
+#    curl \
+#    gnupg \
+#    lsb-release
 
-sudo mkdir -p /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+#sudo mkdir -p /etc/apt/keyrings
+#curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 
-echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+#echo \
+#  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+#  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-sudo apt-get update \
-    && sudo apt-get install -y containerd.io
+#sudo apt-get update \
+#    && sudo apt-get install -y containerd.io
 
-sudo containerd config default | sudo tee /etc/containerd/config.toml
+#sudo containerd config default | sudo tee /etc/containerd/config.toml
 
 # ssh configuration
 ssh-keygen -t rsa
@@ -144,7 +144,7 @@ echo "source <(kubeadm completion bash)" >> ${HOME}/.bashrc
 echo "source <(kubectl completion bash)" | sudo tee -a /root/.bashrc
 echo "source <(kubeadm completion bash)" | sudo tee -a /root/.bashrc
 
-sudo cp ~/xiilab_nfs/config.toml /etc/containerd/
+sudo cp ~/uyuni_nfs_containerd/config.toml /etc/containerd/
 sudo systemctl restart containerd
 
 # install helm
